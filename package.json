@@ -1,0 +1,35 @@
+{
+  "name": "vite-plugin-gherkin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/vite-plugin-gherkin.js",
+  "types": "dist/vite-plugin-gherkin.d.ts",
+  "scripts": {
+    "pretest": "pnpm build",
+    "test": "vitest",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.0",
+  "type": "module",
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/node": "^24.0.10",
+    "glob": "^11.0.3",
+    "typescript": "^5.8.3",
+    "vite-plugin-gherkin": "link:",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@cucumber/cucumber-expressions": "^18.0.1",
+    "@cucumber/gherkin": "^32.1.2",
+    "@cucumber/messages": "^27.2.0",
+    "source-map-generator": "^2.0.1",
+    "strip-literal": "^3.0.0"
+  },
+  "peerDependencies": {
+    "vitest": "^3.2.4"
+  }
+}
