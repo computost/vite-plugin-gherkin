@@ -1,7 +1,8 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
-  "files": ["vite-plugin-gherkin.ts"],
+  "include": ["src/**/*.ts"],
   "compilerOptions": {
+    "rootDirs": ["src", "features"],
     "outDir": "dist",
     "declaration": true
   }

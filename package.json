@@ -4,6 +4,13 @@
   "description": "",
   "main": "dist/vite-plugin-gherkin.js",
   "types": "dist/vite-plugin-gherkin.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.ts"
+    },
+    "./internal": "./dist/internal.js"
+  },
   "scripts": {
     "pretest": "pnpm build",
     "test": "vitest",
