@@ -6,8 +6,8 @@
   "types": "dist/vite-plugin-gherkin.d.ts",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.ts"
+      "types": "./dist/index.ts",
+      "default": "./dist/index.js"
     },
     "./internal": "./dist/internal.js"
   },
