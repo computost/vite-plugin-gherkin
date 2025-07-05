@@ -6,7 +6,7 @@ import {
   GherkinClassicTokenMatcher,
   Parser,
 } from "@cucumber/gherkin";
-import { IdGenerator, Location } from "@cucumber/messages";
+import { IdGenerator, type Location } from "@cucumber/messages";
 
 const defaultConfig = {
   importTestFrom: "vitest",
@@ -30,7 +30,9 @@ export function vitePluginGherkin({
           const source = new SourceNode()
             .add(`import { describe } from "vitest";\n`)
             .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
-            .add(`import { buildTestFunction } from "vite-plugin-gherkin/internal";\n`)
+            .add(
+              `import { buildTestFunction } from "vite-plugin-gherkin/internal";\n`
+            )
             .add(
               new SourceNode(
                 gherkinDocument.feature.location.line,

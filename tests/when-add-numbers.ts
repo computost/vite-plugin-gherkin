@@ -1,4 +1,4 @@
-import { When } from "./test";
+import { When } from "./test.ts";
 
 When(
   "I add {string} and {string} into {string}",

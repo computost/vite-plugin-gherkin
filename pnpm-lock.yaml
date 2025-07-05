@@ -17,6 +17,9 @@ importers:
       '@cucumber/messages':
         specifier: ^27.2.0
         version: 27.2.0
+      '@tsconfig/node-ts':
+        specifier: ^23.6.1
+        version: 23.6.1
       source-map-generator:
         specifier: ^2.0.1
         version: 2.0.1
@@ -318,6 +321,9 @@ packages:
     resolution: {integrity: sha512-J8o22LuF0kTe7m+8PvW9wk3/bRq5+mRo5Dqo6+vXb7otCm3TPhYOJqOaQtGU9YMWQSL3krMnoOxMr0+9E6F3Ug==}
     cpu: [x64]
     os: [win32]
+
+  '@tsconfig/node-ts@23.6.1':
+    resolution: {integrity: sha512-1E5cUp+S65pLKKI9VrGMQPWDHxOEq3dAGM2onG3fLeSRwWbylYFwhIjnzJikjSN7w2nCgwxmv8ifvUKDFkK38Q==}
 
   '@tsconfig/node22@22.0.2':
     resolution: {integrity: sha512-Kmwj4u8sDRDrMYRoN9FDEcXD8UpBSaPQQ24Gz+Gamqfm7xxn+GBR7ge/Z7pK8OXNGyUzbSwJj+TH6B+DS/epyA==}
@@ -896,6 +902,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.44.1':
     optional: true
+
+  '@tsconfig/node-ts@23.6.1': {}
 
   '@tsconfig/node22@22.0.2': {}
 

@@ -1,5 +1,5 @@
 import path from "path";
-import { Given } from "./test-context";
+import { Given } from "./test-context.ts";
 
 Given("a test context with a number repository", ([], { importTestFrom }) => {
   importTestFrom.testFile = path.resolve(__dirname, "../../tests/test.ts");

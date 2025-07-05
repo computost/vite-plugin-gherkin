@@ -1,8 +1,7 @@
-import path from "path";
-import { Given, Then, When } from "./test-context";
+import { Given, Then, When } from "./test-context.ts";
 import { startVitest } from "vitest/node";
 import { expect } from "vitest";
-import { vitePluginGherkin } from "../../dist/vite-plugin-gherkin";
+import { vitePluginGherkin } from "vite-plugin-gherkin";
 
 Given(
   "a feature file named {string}:",

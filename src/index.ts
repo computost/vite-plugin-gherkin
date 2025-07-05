@@ -1,6 +1,6 @@
-import { registerStep } from "./step-registry.js";
-export type { RegisterStep, StepFunction } from "./step-registry.js";
-export { vitePluginGherkin } from "./vite-plugin-gherkin.js";
+import { registerStep } from "./step-registry.ts";
+export type { RegisterStep, StepFunction } from "./step-registry.ts";
+export { vitePluginGherkin } from "./vite-plugin-gherkin.ts";
 
 export const Given = registerStep;
 export const When = registerStep;

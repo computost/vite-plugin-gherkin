@@ -1,3 +1,3 @@
-import { Given } from "./test";
+import { Given } from "./test.ts";
 
 Given("a step passes", () => {});

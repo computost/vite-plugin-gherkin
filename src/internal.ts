@@ -1,7 +1,7 @@
 import type { Argument } from "@cucumber/cucumber-expressions";
 import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
-import { getStep, type StepFunction } from "./step-registry.js";
+import { getStep, type StepFunction } from "./step-registry.ts";
 
 export async function buildTestFunction(
   executeTest: (
