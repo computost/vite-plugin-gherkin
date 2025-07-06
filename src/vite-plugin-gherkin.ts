@@ -41,7 +41,7 @@ export function vitePluginGherkin({
                 [
                   "describe(",
                   JSON.stringify(gherkinDocument.feature.name),
-                  ", async () => {\n",
+                  ", () => {\n",
                   ...gherkinDocument.feature.children.map((child) => {
                     if (child.scenario) {
                       return new SourceNode(
@@ -51,7 +51,7 @@ export function vitePluginGherkin({
                         [
                           "test(",
                           JSON.stringify(child.scenario.name),
-                          ", await buildTestFunction(async (step) => {\n",
+                          ", buildTestFunction(function*(step) {\n",
                           ...child.scenario.steps.map(
                             (step) =>
                               new SourceNode(
@@ -59,13 +59,13 @@ export function vitePluginGherkin({
                                 column(step.location),
                                 id,
                                 [
-                                  "await step(",
+                                  "yield { text: ",
                                   JSON.stringify(step.text),
-                                  ",",
+                                  ", doc: ",
                                   step.docString
                                     ? JSON.stringify(step.docString.content)
                                     : "undefined",
-                                  ");\n",
+                                  "};\n",
                                 ]
                               )
                           ),

@@ -1,51 +1,44 @@
-import type { Argument } from "@cucumber/cucumber-expressions";
 import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
-import { getStep, type StepFunction } from "./step-registry.ts";
+import { getStep } from "./step-registry.ts";
 
 export async function buildTestFunction(
-  executeTest: (
-    step: (step: string, doc?: string) => void | Promise<void>
-  ) => Promise<void>
+  testSteps: () => Iterable<{ text: string; doc?: string }>
 ) {
-  const stepMatches: Record<
-    string,
-    { fn: StepFunction<object>; args: readonly Argument[] }
-  > = {};
-  const contextDependencies = new Set<string>();
-  const missingSteps: string[] = [];
-
-  await executeTest(function buildStepPlan(step) {
-    const stepDefintion = getStep(step);
-    if (stepDefintion) {
-      stepMatches[step] = stepDefintion;
-      getUsedProps(stepDefintion.fn, 1).forEach((contextDependency) =>
-        contextDependencies.add(contextDependency)
-      );
-    } else {
-      missingSteps.push(step);
-    }
-  });
-
-  if (missingSteps.length) {
+  const steps = Array.from(testSteps()).map((step) => getStep(step.text));
+  if (!allDefined(steps)) {
     return function reportMissingSteps() {
-      return executeTest((step) => {
-        if (missingSteps.includes(step)) {
-          throw new Error(`Undefined step: ${step}`);
+      let i = 0;
+      for (let step of testSteps()) {
+        if (steps[i] === null) {
+          throw new Error(`Undefined step: ${step.text}`);
         }
-      });
+        i++;
+      }
     };
   }
 
-  function scenarioFunction(context: TestContext & unknown) {
-    return executeTest((step, doc) => {
-      const { args, fn } = stepMatches[step];
-      return fn([...args.map((arg) => arg.getValue(context)), doc], context);
-    });
-  }
+  const scenarioFunction = async function scenarioFunction(
+    context: TestContext & unknown
+  ) {
+    let i = 0;
+    for (let { doc } of testSteps()) {
+      const step = steps[i];
+      await step.fn(
+        [step.args.map((arg) => arg.getValue(context)), doc],
+        context
+      );
+    }
+  };
   scenarioFunction.toString = () =>
-    `({${[...contextDependencies].join(",")}}) => {}`;
+    `({${[...new Set(steps.flatMap((step) => getUsedProps(step.fn, 1)))].join(
+      ","
+    )}}) => {}`;
   return scenarioFunction;
+}
+
+function allDefined<T>(arr: T[]): arr is NonNullable<T>[] {
+  return arr.every((e) => e != null);
 }
 
 // borrowed directy from the vitest repo with minor modifications
