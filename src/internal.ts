@@ -3,7 +3,7 @@ import type { TestContext } from "vitest";
 import { getStep, type StepFunction } from "./step-registry.ts";
 
 export function buildTestFunction(
-  testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>
+  testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>,
 ) {
   const steps = Array.from(testSteps(getStep));
 
@@ -19,14 +19,14 @@ export function buildTestFunction(
   }
 
   const scenarioFunction = async function scenarioFunction(
-    context: TestContext & unknown
+    context: TestContext & unknown,
   ) {
     let i = 0;
     for (const task of testSteps((_, doc) => {
       const step = steps[i];
       return step.fn(
         [...step.args.map((arg) => arg.getValue(context)), doc],
-        context
+        context,
       );
     })) {
       await task;
@@ -35,7 +35,7 @@ export function buildTestFunction(
   };
   scenarioFunction.toString = () =>
     `({${[...new Set(steps.flatMap((step) => getUsedProps(step.fn, 1)))].join(
-      ","
+      ",",
     )}}) => {}`;
   return scenarioFunction;
 }
@@ -55,7 +55,7 @@ function getUsedProps(fn: StepFunction<object>, fixtureIndex: number) {
   //   __async(this, [_0, _1], function*
   if (
     /__async\((?:this|null), (?:null|arguments|\[[_0-9, ]*\]), function\*/.test(
-      fnString
+      fnString,
     )
   ) {
     fnString = fnString.split(/__async\((?:this|null),/)[1];
@@ -74,7 +74,7 @@ function getUsedProps(fn: StepFunction<object>, fixtureIndex: number) {
 
   if (!(fixtureArg.startsWith("{") && fixtureArg.endsWith("}"))) {
     throw new Error(
-      `The first argument inside a fixture must use object destructuring pattern, e.g. ({ test } => {}). Instead, received "${fixtureArg}".`
+      `The first argument inside a fixture must use object destructuring pattern, e.g. ({ test } => {}). Instead, received "${fixtureArg}".`,
     );
   }
 
@@ -86,7 +86,7 @@ function getUsedProps(fn: StepFunction<object>, fixtureIndex: number) {
   const last = props.at(-1);
   if (last && last.startsWith("...")) {
     throw new Error(
-      `Rest parameters are not supported in fixtures, received "${last}".`
+      `Rest parameters are not supported in fixtures, received "${last}".`,
     );
   }
 

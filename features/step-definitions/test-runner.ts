@@ -7,7 +7,7 @@ Given(
   "a feature file named {string}:",
   ([fileName, file]: [string, string], { virutalTestFiles }) => {
     virutalTestFiles.push({ fileName, file });
-  }
+  },
 );
 
 When(
@@ -33,7 +33,7 @@ When(
                   .join("\n");
               }
               const virtualTestFile = virutalTestFiles.find(
-                ({ fileName }) => fileName === id
+                ({ fileName }) => fileName === id,
               );
               if (virtualTestFile) {
                 return virtualTestFile.file;
@@ -43,16 +43,16 @@ When(
           vitePluginGherkin(
             importTestFrom.testFile
               ? { importTestFrom: importTestFrom.testFile }
-              : undefined
+              : undefined,
           ),
         ],
         test: {
           setupFiles,
           include: ["tests/load-virtual-test-files.ts"],
         },
-      }
+      },
     );
-  }
+  },
 );
 
 Then("the tests pass", (_, { testResults }) => {

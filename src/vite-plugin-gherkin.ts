@@ -31,7 +31,7 @@ export function vitePluginGherkin({
             .add(`import { describe } from "vitest";\n`)
             .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
-              `import { buildTestFunction } from "vite-plugin-gherkin/internal";\n`
+              `import { buildTestFunction } from "vite-plugin-gherkin/internal";\n`,
             )
             .add(
               new SourceNode(
@@ -66,18 +66,18 @@ export function vitePluginGherkin({
                                     ? JSON.stringify(step.docString.content)
                                     : "undefined",
                                   ");\n",
-                                ]
-                              )
+                                ],
+                              ),
                           ),
                           "}));\n",
-                        ]
+                        ],
                       );
                     }
                     throw new Error("Not Implemented");
                   }),
                   "});",
-                ]
-              )
+                ],
+              ),
             )
             .toStringWithSourceMap();
           source.map.setSourceContent(id, code);

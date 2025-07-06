@@ -8,7 +8,7 @@ export default defineConfig({
     vitePluginGherkin({
       importTestFrom: path.resolve(
         __dirname,
-        "./features/step-definitions/test-context.ts"
+        "./features/step-definitions/test-context.ts",
       ),
     }),
   ],

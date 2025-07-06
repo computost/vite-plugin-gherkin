@@ -17,9 +17,9 @@ Given(
   "a Then step that asserts a number equals a value",
   (_, { setupFiles }) => {
     setupFiles.push(
-      path.resolve(__dirname, "../../tests/then-number-equals.ts")
+      path.resolve(__dirname, "../../tests/then-number-equals.ts"),
     );
-  }
+  },
 );
 
 Given("a Given step that passes", (_, { setupFiles }) => {
@@ -28,6 +28,6 @@ Given("a Given step that passes", (_, { setupFiles }) => {
 
 Given("passing Given When Then steps", (_, { setupFiles }) => {
   setupFiles.push(
-    path.resolve(__dirname, "../../tests/passing-given-when-then-steps.ts")
+    path.resolve(__dirname, "../../tests/passing-given-when-then-steps.ts"),
   );
 });

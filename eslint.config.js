@@ -5,6 +5,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
+import prettier from "eslint-plugin-prettier/recommended";
 
 export default tseslint.config([
   { ignores: ["dist"] },
@@ -38,4 +39,5 @@ export default tseslint.config([
     language: "markdown/gfm",
     extends: [markdown.configs.recommended],
   },
+  prettier,
 ]);

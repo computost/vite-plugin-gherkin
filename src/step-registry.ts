@@ -18,21 +18,21 @@ export interface RegisterStep<ExtraContext extends BaseContext> {
     expression: string,
     step: (
       args: TArgs,
-      context: TestContext & ExtraContext
-    ) => void | Promise<void>
+      context: TestContext & ExtraContext,
+    ) => void | Promise<void>,
   ): void;
   (
     regExp: RegExp,
     step: (
       args: readonly string[],
-      context: TestContext & ExtraContext
-    ) => void | Promise<void>
+      context: TestContext & ExtraContext,
+    ) => void | Promise<void>,
   ): void;
 }
 
 export type StepFunction<ExtraContext extends BaseContext> = (
   args: any[],
-  context: TestContext & ExtraContext
+  context: TestContext & ExtraContext,
 ) => void | Promise<void>;
 
 const stepRegistry: {
@@ -43,7 +43,7 @@ const parameterTypeRegistry = new ParameterTypeRegistry();
 
 export const registerStep: RegisterStep<object> = (
   expression: string | RegExp,
-  step: StepFunction<object>
+  step: StepFunction<object>,
 ) => {
   if (typeof expression === "string") {
     stepRegistry.push({
