@@ -1,10 +1,10 @@
-import { test as base } from "vitest";
 import {
   Given as baseGiven,
-  When as baseWhen,
   Then as baseThen,
+  When as baseWhen,
   type RegisterStep,
 } from "vite-plugin-gherkin";
+import { test as base } from "vitest";
 
 interface NumberRepository {
   numbers: Record<string, number>;

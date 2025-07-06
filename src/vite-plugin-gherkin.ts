@@ -1,12 +1,13 @@
 import type { Vite } from "vitest/node";
-import path from "path";
-import { SourceNode } from "source-map-generator";
+
 import {
   AstBuilder,
   GherkinClassicTokenMatcher,
   Parser,
 } from "@cucumber/gherkin";
 import { IdGenerator, type Location } from "@cucumber/messages";
+import path from "path";
+import { SourceNode } from "source-map-generator";
 
 const defaultConfig = {
   importTestFrom: "vitest",

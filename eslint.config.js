@@ -1,18 +1,19 @@
 // @ts-check
 
 import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
+import perfectionist from "eslint-plugin-perfectionist";
 import prettier from "eslint-plugin-prettier/recommended";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config([
   { ignores: ["dist"] },
   {
+    extends: [js.configs.recommended],
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     plugins: { js },
-    extends: [js.configs.recommended],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
@@ -28,16 +29,21 @@ export default tseslint.config([
     },
   },
   {
-    files: ["**/*.json"],
-    plugins: { json },
-    language: "json/json",
     extends: [json.configs.recommended],
+    files: ["**/*.json"],
+    language: "json/json",
+    plugins: { json },
   },
   {
-    files: ["**/*.md"],
-    plugins: { markdown },
-    language: "markdown/gfm",
     extends: [markdown.configs.recommended],
+    files: ["**/*.md"],
+    language: "markdown/gfm",
+    plugins: { markdown },
+  },
+  {
+    extends: [perfectionist.configs["recommended-natural"]],
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    rules: { "perfectionist/sort-modules": ["off"] },
   },
   prettier,
 ]);

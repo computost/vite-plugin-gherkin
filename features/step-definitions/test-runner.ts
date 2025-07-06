@@ -1,30 +1,30 @@
-import { Given, Then, When } from "./test-context.ts";
-import { startVitest } from "vitest/node";
-import { expect } from "vitest";
 import { vitePluginGherkin } from "vite-plugin-gherkin";
+import { expect } from "vitest";
+import { startVitest } from "vitest/node";
+
+import { Given, Then, When } from "./test-context.ts";
 
 Given(
   "a feature file named {string}:",
   ([fileName, file]: [string, string], { virutalTestFiles }) => {
-    virutalTestFiles.push({ fileName, file });
+    virutalTestFiles.push({ file, fileName });
   },
 );
 
 When(
   "I run the tests",
-  async (_, { setupFiles, virutalTestFiles, testResults, importTestFrom }) => {
+  async (_, { importTestFrom, setupFiles, testResults, virutalTestFiles }) => {
     testResults.vitest = await startVitest(
       "test",
       [],
       {
         config: false,
-        watch: false,
         silent: true,
+        watch: false,
       },
       {
         plugins: [
           {
-            name: "virtual-test-files",
             enforce: "pre",
             load(id) {
               if (id === "virtual:test-files") {
@@ -39,6 +39,7 @@ When(
                 return virtualTestFile.file;
               }
             },
+            name: "virtual-test-files",
           },
           vitePluginGherkin(
             importTestFrom.testFile
@@ -47,8 +48,8 @@ When(
           ),
         ],
         test: {
-          setupFiles,
           include: ["tests/load-virtual-test-files.ts"],
+          setupFiles,
         },
       },
     );

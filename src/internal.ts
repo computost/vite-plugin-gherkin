@@ -1,5 +1,7 @@
-import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
+
+import { stripLiteral } from "strip-literal";
+
 import { getStep, type StepFunction } from "./step-registry.ts";
 
 export function buildTestFunction(
