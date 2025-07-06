@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "cucumberopen.cucumber-official", 
+    "dbaeumer.vscode-eslint",
     "vitest.explorer"
   ]
 }
