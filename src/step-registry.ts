@@ -1,3 +1,8 @@
+// There are several cases in this file where `any` is needed for our current
+// implementation of the API. There might be some ways to improve type safety,
+// but for now, we leave this comment and disable as a TODO.
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   CucumberExpression,
   type Expression,
