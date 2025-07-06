@@ -7,6 +7,7 @@ import json from "@eslint/json";
 import markdown from "@eslint/markdown";
 
 export default tseslint.config([
+  { ignores: ["dist"] },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     plugins: { js },
