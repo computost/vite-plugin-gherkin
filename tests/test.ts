@@ -11,7 +11,7 @@ interface NumberRepository {
 }
 
 export const test = base.extend<NumberRepository>({
-  numbers: ({}, use) => use({}),
+  numbers: (_, use) => use({}),
 });
 
 export const Given = baseGiven as RegisterStep<NumberRepository>;

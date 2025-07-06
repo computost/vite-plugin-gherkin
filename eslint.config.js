@@ -19,6 +19,14 @@ export default tseslint.config([
   },
   tseslint.configs.recommended,
   {
+    // We configure this rule for our context file in order to allow Vitest to
+    // properly parse test context requirements.
+    files: ["features/step-definitions/test-context.ts"],
+    rules: {
+      "no-empty-pattern": ["error", { allowObjectPatternsAsParameters: true }],
+    },
+  },
+  {
     files: ["**/*.json"],
     plugins: { json },
     language: "json/json",
