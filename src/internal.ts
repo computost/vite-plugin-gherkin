@@ -2,17 +2,19 @@ import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
 import { getStep } from "./step-registry.ts";
 
-export async function buildTestFunction(
-  testSteps: () => Iterable<{ text: string; doc?: string }>
+export function buildTestFunction(
+  testSteps: <T>(step: (text: string, doc?: string) => T) => Iterable<T>
 ) {
-  const steps = Array.from(testSteps()).map((step) => getStep(step.text));
+  const steps = Array.from(testSteps(getStep));
+
   if (!allDefined(steps)) {
     return function reportMissingSteps() {
       let i = 0;
-      for (let step of testSteps()) {
-        if (steps[i] === null) {
-          throw new Error(`Undefined step: ${step.text}`);
+      for (let _ of testSteps((text) => {
+        if (!steps[i]) {
+          throw new Error(`Undefined step: ${text}`);
         }
+      })) {
         i++;
       }
     };
@@ -22,12 +24,15 @@ export async function buildTestFunction(
     context: TestContext & unknown
   ) {
     let i = 0;
-    for (let { doc } of testSteps()) {
+    for (let task of testSteps((_, doc) => {
       const step = steps[i];
-      await step.fn(
-        [step.args.map((arg) => arg.getValue(context)), doc],
+      return step.fn(
+        [...step.args.map((arg) => arg.getValue(context)), doc],
         context
       );
+    })) {
+      await task;
+      i++;
     }
   };
   scenarioFunction.toString = () =>

@@ -59,13 +59,13 @@ export function vitePluginGherkin({
                                 column(step.location),
                                 id,
                                 [
-                                  "yield { text: ",
+                                  "yield step(",
                                   JSON.stringify(step.text),
-                                  ", doc: ",
+                                  ",",
                                   step.docString
                                     ? JSON.stringify(step.docString.content)
                                     : "undefined",
-                                  "};\n",
+                                  ");\n",
                                 ]
                               )
                           ),
