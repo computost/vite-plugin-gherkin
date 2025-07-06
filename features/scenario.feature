@@ -1,4 +1,5 @@
 Feature: Scenario
+
   Scenario: Simple Scenario
     Given a test context with a number repository
     And a Given step that stores a number
