@@ -6,14 +6,14 @@ import { Given, Then, When } from "./test-context.ts";
 
 Given(
   "a feature file named {string}:",
-  ([fileName, file]: [string, string], { virutalTestFiles }) => {
-    virutalTestFiles.push({ file, fileName });
+  ([fileName, file]: [string, string], { virtualTestFiles }) => {
+    virtualTestFiles.push({ file, fileName });
   },
 );
 
 When(
   "I run the tests",
-  async (_, { importTestFrom, setupFiles, testResults, virutalTestFiles }) => {
+  async (_, { importTestFrom, setupFiles, testResults, virtualTestFiles }) => {
     testResults.vitest = await startVitest(
       "test",
       [],
@@ -28,11 +28,11 @@ When(
             enforce: "pre",
             load(id) {
               if (id === "virtual:test-files") {
-                return virutalTestFiles
+                return virtualTestFiles
                   .map(({ fileName }) => `import "${fileName}";`)
                   .join("\n");
               }
-              const virtualTestFile = virutalTestFiles.find(
+              const virtualTestFile = virtualTestFiles.find(
                 ({ fileName }) => fileName === id,
               );
               if (virtualTestFile) {

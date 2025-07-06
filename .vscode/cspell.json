@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/refs/tags/v8.18.1/cspell.schema.json",
+  "ignorePaths": ["pnpm-lock.yaml", "pnpm-workspace.yaml"],
+  "useGitignore": true
+}

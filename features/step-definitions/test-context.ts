@@ -11,14 +11,14 @@ interface VitestConfiguration {
   importTestFrom: { testFile?: string };
   setupFiles: string[];
   testResults: { vitest?: Vitest };
-  virutalTestFiles: { file: string; fileName: string }[];
+  virtualTestFiles: { file: string; fileName: string }[];
 }
 
 export const test = base.extend<VitestConfiguration>({
   importTestFrom: ({}, use) => use({}),
   setupFiles: ({}, use) => use([]),
   testResults: ({}, use) => use({}),
-  virutalTestFiles: ({}, use) => use([]),
+  virtualTestFiles: ({}, use) => use([]),
 });
 
 export const Given = baseGiven as RegisterStep<VitestConfiguration>;

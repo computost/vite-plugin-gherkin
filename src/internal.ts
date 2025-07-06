@@ -46,7 +46,7 @@ function allDefined<T>(arr: T[]): arr is NonNullable<T>[] {
   return arr.every((e) => e != null);
 }
 
-// borrowed directy from the vitest repo with minor modifications
+// borrowed directly from the vitest repo with minor modifications
 // https://github.com/vitest-dev/vitest/blob/v3.2.4/packages/runner/src/fixture.ts#L341
 function getUsedProps(fn: StepFunction<object>, fixtureIndex: number) {
   let fnString = stripLiteral(fn.toString());
