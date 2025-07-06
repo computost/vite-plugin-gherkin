@@ -3,20 +3,18 @@ import type { TestContext } from "vitest";
 import { getStep } from "./step-registry.ts";
 
 export function buildTestFunction(
-  testSteps: <T>(step: (text: string, doc?: string) => T) => Iterable<T>
+  testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>
 ) {
   const steps = Array.from(testSteps(getStep));
 
   if (!allDefined(steps)) {
     return function reportMissingSteps() {
       let i = 0;
-      for (let _ of testSteps((text) => {
+      testSteps((text) => {
         if (!steps[i]) {
           throw new Error(`Undefined step: ${text}`);
         }
-      })) {
-        i++;
-      }
+      }).forEach(() => i++);
     };
   }
 
@@ -24,7 +22,7 @@ export function buildTestFunction(
     context: TestContext & unknown
   ) {
     let i = 0;
-    for (let task of testSteps((_, doc) => {
+    for (const task of testSteps((_, doc) => {
       const step = steps[i];
       return step.fn(
         [...step.args.map((arg) => arg.getValue(context)), doc],
@@ -72,7 +70,7 @@ function getUsedProps(fn: Function, fixtureIndex: number) {
     return [];
   }
 
-  let fixtureArg = args[fixtureIndex];
+  const fixtureArg = args[fixtureIndex];
 
   if (!(fixtureArg.startsWith("{") && fixtureArg.endsWith("}"))) {
     throw new Error(

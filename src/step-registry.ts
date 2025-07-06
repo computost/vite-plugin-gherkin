@@ -54,7 +54,7 @@ export const registerStep: RegisterStep<object> = (
 };
 
 export function getStep(step: string) {
-  for (let { expression, step: fn } of stepRegistry) {
+  for (const { expression, step: fn } of stepRegistry) {
     const args = expression.match(step);
     if (args) {
       return { fn, args };
