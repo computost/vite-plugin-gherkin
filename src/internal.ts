@@ -1,6 +1,6 @@
 import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
-import { getStep } from "./step-registry.ts";
+import { getStep, type StepFunction } from "./step-registry.ts";
 
 export function buildTestFunction(
   testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>
@@ -46,7 +46,7 @@ function allDefined<T>(arr: T[]): arr is NonNullable<T>[] {
 
 // borrowed directy from the vitest repo with minor modifications
 // https://github.com/vitest-dev/vitest/blob/v3.2.4/packages/runner/src/fixture.ts#L341
-function getUsedProps(fn: Function, fixtureIndex: number) {
+function getUsedProps(fn: StepFunction<object>, fixtureIndex: number) {
   let fnString = stripLiteral(fn.toString());
   // match lowered async function and strip it off
   // example code on esbuild-try https://esbuild.github.io/try/#YgAwLjI0LjAALS1zdXBwb3J0ZWQ6YXN5bmMtYXdhaXQ9ZmFsc2UAZQBlbnRyeS50cwBjb25zdCBvID0gewogIGYxOiBhc3luYyAoKSA9PiB7fSwKICBmMjogYXN5bmMgKGEpID0+IHt9LAogIGYzOiBhc3luYyAoYSwgYikgPT4ge30sCiAgZjQ6IGFzeW5jIGZ1bmN0aW9uKGEpIHt9LAogIGY1OiBhc3luYyBmdW5jdGlvbiBmZihhKSB7fSwKICBhc3luYyBmNihhKSB7fSwKCiAgZzE6IGFzeW5jICgpID0+IHt9LAogIGcyOiBhc3luYyAoeyBhIH0pID0+IHt9LAogIGczOiBhc3luYyAoeyBhIH0sIGIpID0+IHt9LAogIGc0OiBhc3luYyBmdW5jdGlvbiAoeyBhIH0pIHt9LAogIGc1OiBhc3luYyBmdW5jdGlvbiBnZyh7IGEgfSkge30sCiAgYXN5bmMgZzYoeyBhIH0pIHt9LAoKICBoMTogYXN5bmMgKCkgPT4ge30sCiAgLy8gY29tbWVudCBiZXR3ZWVuCiAgaDI6IGFzeW5jIChhKSA9PiB7fSwKfQ
