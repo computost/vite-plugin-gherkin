@@ -22,7 +22,9 @@
     "test": "vitest",
     "build": "tsc --project tsconfig.build.json",
     "spellcheck": "cspell lint . --config .vscode/cspell.json",
-    "lint-gherkin": "prettier --check **/*.feature"
+    "format-gherkin": "prettier --check **/*.feature",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +44,7 @@
     "eslint-plugin-prettier": "^5.5.1",
     "glob": "^11.0.3",
     "globals": "^16.3.0",
+    "lefthook": "^1.11.16",
     "prettier": "3.6.2",
     "prettier-plugin-gherkin": "^3.1.2",
     "typescript": "^5.8.3",
