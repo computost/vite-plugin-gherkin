@@ -12,7 +12,7 @@ Given(
 
 When(
   "I run the tests",
-  async ([], { setupFiles, virutalTestFiles, testResults, importTestFrom }) => {
+  async (_, { setupFiles, virutalTestFiles, testResults, importTestFrom }) => {
     testResults.vitest = await startVitest(
       "test",
       [],
@@ -55,12 +55,12 @@ When(
   }
 );
 
-Then("the tests pass", ([], { testResults }) => {
+Then("the tests pass", (_, { testResults }) => {
   const modules = testResults.vitest!.state.getTestModules();
   expect(modules.every((module) => module.ok())).toBe(true);
 });
 
-Then("the tests fail", ([], { testResults }) => {
+Then("the tests fail", (_, { testResults }) => {
   const modules = testResults.vitest!.state.getTestModules();
   expect(modules.some((module) => module.ok())).toBe(false);
 });
