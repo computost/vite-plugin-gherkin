@@ -14,6 +14,9 @@ export default defineConfig({
   ],
   test: {
     include: ["features/**/*.feature"],
+    sequence: {
+      concurrent: true,
+    },
     setupFiles: await glob("features/step-definitions/**/*.ts"),
   },
 });
