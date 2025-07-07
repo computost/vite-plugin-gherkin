@@ -5,7 +5,7 @@ import {
   GherkinClassicTokenMatcher,
   Parser,
 } from "@cucumber/gherkin";
-import { IdGenerator, type Location } from "@cucumber/messages";
+import { type DataTable, IdGenerator, type Location } from "@cucumber/messages";
 import path from "path";
 import { SourceNode } from "source-map-generator";
 
@@ -32,7 +32,7 @@ export function vitePluginGherkin({
             .add(`import { describe } from "vitest";\n`)
             .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
-              `import { buildTestFunction } from "vite-plugin-gherkin/internal";\n`,
+              `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
             )
             .add(
               new SourceNode(
@@ -63,9 +63,22 @@ export function vitePluginGherkin({
                                   "yield step(",
                                   JSON.stringify(step.text),
                                   ",",
-                                  step.docString
-                                    ? JSON.stringify(step.docString.content)
-                                    : "undefined",
+                                  step.dataTable
+                                    ? new SourceNode(
+                                        step.dataTable.location.line,
+                                        column(step.dataTable.location),
+                                        id,
+                                        [
+                                          "new DataTable(",
+                                          JSON.stringify(
+                                            rawTable(step.dataTable),
+                                          ),
+                                          ")",
+                                        ],
+                                      )
+                                    : step.docString
+                                      ? JSON.stringify(step.docString.content)
+                                      : "undefined",
                                   ");\n",
                                 ],
                               ),
@@ -95,4 +108,8 @@ export function vitePluginGherkin({
 
 function column(location: Location) {
   return location.column !== undefined ? location.column - 1 : null;
+}
+
+function rawTable(dataTable: DataTable): string[][] {
+  return dataTable.rows.map((row) => row.cells.map((cell) => cell.value));
 }

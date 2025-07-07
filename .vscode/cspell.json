@@ -1,11 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/refs/tags/v8.18.1/cspell.schema.json",
-  "dictionaries": ["tools"],
+  "dictionaries": ["tools", "latin"],
   "dictionaryDefinitions": [
     {
       "addWords": true,
       "name": "tools",
       "path": "../.cspell/tools-dictionary.txt",
+      "scope": "workspace"
+    },
+    {
+      "addWords": true,
+      "name": "latin",
+      "path": "../.cspell/latin-dictionary.txt",
       "scope": "workspace"
     }
   ],

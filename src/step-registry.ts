@@ -7,18 +7,20 @@ import {
   RegularExpression,
 } from "@cucumber/cucumber-expressions";
 
+import type { DataTable } from "./data-table.ts";
+
 export interface RegisterStep<ExtraContext = unknown> {
   <TArgs extends unknown[]>(
     expression: string,
     step: (
-      args: TArgs,
+      args: [...TArgs, DataTable] | [...TArgs, string] | TArgs,
       context: ExtraContext & TestContext,
     ) => Promise<void> | void,
   ): void;
-  (
+  <TArgs extends string[]>(
     regExp: RegExp,
     step: (
-      args: string[],
+      args: [...TArgs, DataTable] | [...TArgs, string] | TArgs,
       context: ExtraContext & TestContext,
     ) => Promise<void> | void,
   ): void;

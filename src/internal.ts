@@ -3,6 +3,7 @@ import type { TestContext } from "vitest";
 import { stripLiteral } from "strip-literal";
 
 import { getStep, type StepFunction } from "./step-registry.ts";
+export { DataTable } from "./data-table.ts";
 
 export function buildTestFunction(
   testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>,
