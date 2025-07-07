@@ -1,8 +1,3 @@
-// There are several cases in this file where `any` is needed for our current
-// implementation of the API. There might be some ways to improve type safety,
-// but for now, we leave this comment and disable as a TODO.
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { TestContext } from "vitest";
 
 import {
@@ -12,10 +7,8 @@ import {
   RegularExpression,
 } from "@cucumber/cucumber-expressions";
 
-type BaseContext = Record<string, any>;
-
-export interface RegisterStep<ExtraContext extends BaseContext> {
-  <TArgs extends any[]>(
+export interface RegisterStep<ExtraContext = unknown> {
+  <TArgs extends unknown[]>(
     expression: string,
     step: (
       args: TArgs,
@@ -25,36 +18,36 @@ export interface RegisterStep<ExtraContext extends BaseContext> {
   (
     regExp: RegExp,
     step: (
-      args: readonly string[],
+      args: string[],
       context: ExtraContext & TestContext,
     ) => Promise<void> | void,
   ): void;
 }
 
-export type StepFunction<ExtraContext extends BaseContext> = (
-  args: any[],
-  context: ExtraContext & TestContext,
-) => Promise<void> | void;
+export type StepFunction<
+  ExtraContext = unknown,
+  TArgs extends unknown[] = unknown[],
+> = (args: TArgs, context: ExtraContext & TestContext) => Promise<void> | void;
 
 const stepRegistry: {
   expression: Expression;
-  step: StepFunction<object>;
+  step: StepFunction;
 }[] = [];
 const parameterTypeRegistry = new ParameterTypeRegistry();
 
-export const registerStep: RegisterStep<object> = (
+export const registerStep: RegisterStep = (
   expression: RegExp | string,
-  step: StepFunction<object>,
+  step: StepFunction | StepFunction<unknown, string[]>,
 ) => {
   if (typeof expression === "string") {
     stepRegistry.push({
       expression: new CucumberExpression(expression, parameterTypeRegistry),
-      step,
+      step: step as StepFunction,
     });
   } else {
     stepRegistry.push({
       expression: new RegularExpression(expression, parameterTypeRegistry),
-      step,
+      step: step as StepFunction,
     });
   }
 };
