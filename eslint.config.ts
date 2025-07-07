@@ -1,5 +1,3 @@
-// @ts-check
-
 import js from "@eslint/js";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";

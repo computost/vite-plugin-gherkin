@@ -44,6 +44,7 @@
     "eslint-plugin-prettier": "^5.5.1",
     "glob": "^11.0.3",
     "globals": "^16.3.0",
+    "jiti": "^2.4.2",
     "lefthook": "^1.11.16",
     "prettier": "3.6.2",
     "prettier-plugin-gherkin": "^3.1.2",
