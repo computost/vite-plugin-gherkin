@@ -2,45 +2,25 @@ import { vitePluginGherkin } from "vite-plugin-gherkin";
 import { expect } from "vitest";
 import { startVitest } from "vitest/node";
 
-import { Given, Then, When } from "./test-context.ts";
-
-Given(
-  "a feature file named {string}:",
-  ([fileName, file]: [string, string], { virtualTestFiles }) => {
-    virtualTestFiles.push({ file, fileName });
-  },
-);
+import { Then, When } from "../support/test-context.ts";
 
 When(
   "I run the tests",
-  async (_, { importTestFrom, setupFiles, testResults, virtualTestFiles }) => {
+  async (
+    _,
+    { importTestFrom, setupFiles, tempDir, testFiles, testResults },
+  ) => {
     testResults.vitest = await startVitest(
       "test",
       [],
       {
         config: false,
+        root: tempDir,
         silent: true,
         watch: false,
       },
       {
         plugins: [
-          {
-            enforce: "pre",
-            load(id) {
-              if (id === "virtual:test-files") {
-                return virtualTestFiles
-                  .map(({ fileName }) => `import "${fileName}";`)
-                  .join("\n");
-              }
-              const virtualTestFile = virtualTestFiles.find(
-                ({ fileName }) => fileName === id,
-              );
-              if (virtualTestFile) {
-                return virtualTestFile.file;
-              }
-            },
-            name: "virtual-test-files",
-          },
           vitePluginGherkin(
             importTestFrom.testFile
               ? { importTestFrom: importTestFrom.testFile }
@@ -48,7 +28,7 @@ When(
           ),
         ],
         test: {
-          include: ["tests/load-virtual-test-files.ts"],
+          include: testFiles,
           setupFiles,
         },
       },

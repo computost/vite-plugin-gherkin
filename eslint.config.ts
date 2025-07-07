@@ -21,7 +21,7 @@ export default tseslint.config([
   {
     // We configure this rule for our context file in order to allow Vitest to
     // properly parse test context requirements.
-    files: ["features/step-definitions/test-context.ts", "tests/test.ts"],
+    files: ["features/support/test-context.ts"],
     rules: {
       "no-empty-pattern": ["error", { allowObjectPatternsAsParameters: true }],
     },

@@ -4,7 +4,7 @@ Feature: Core feature elements execution
   I want Cucumber to run core feature elements
 
   Scenario: simple
-    Given a feature file named "a.feature":
+    Given a feature file named "features/a.feature" with:
       """
       Feature: some feature
         Scenario:
@@ -12,12 +12,17 @@ Feature: Core feature elements execution
           When a step passes
           Then a step passes
       """
-    And a Given step that passes
+    And a step file named "features/step-definitions/passing-step.js" with:
+      ```js
+      import { Given } from "vite-plugin-gherkin";
+
+      Given(/^a step passes$/, () => {});
+      ```
     When I run the tests
     Then the tests pass
 
   Scenario: Given, When, Then, And and But steps
-    Given a feature file named "a.feature":
+    Given a feature file named "features/a.feature" with:
       """
       Feature: Given, When, Then, And and But step execution
         Scenario: All kinds of steps
@@ -36,13 +41,19 @@ Feature: Core feature elements execution
           And a "Then" step passes
           But a "Then" step passes
       """
-    And passing Given When Then steps
+    And a step file named "features/step-definitions/passing-steps.js" with:
+      ```js
+      import { Given, Then, When } from "vite-plugin-gherkin";
+
+      Given(/^a "Given" step passes$/, function() {})
+      When(/^a "When" step passes$/, function() {})
+      Then(/^a "Then" step passes$/, function() {})
+      ```
     When I run the tests
     Then the tests pass
 
-  # TODO
   Scenario: Step definition body is executed
-    Given a file named "features/a.feature" with:
+    Given a feature file named "features/a.feature" with:
       """
       Feature: Step definition body execution
         Scenario: Step definition body is executed once
@@ -55,29 +66,32 @@ Feature: Core feature elements execution
           And I call a watched step
           Then the watched step should have been called 3 times
       """
-    And a file named "features/step_definitions/cucumber_steps.js" with:
-      """
-      const {setWorldConstructor, Then, When} = require('@cucumber/cucumber')
-      const assert = require('assert')
+    And a test context file named "features/support/test.js" with:
+      ```js
+      import { test as base } from "vitest";
 
-      setWorldConstructor(function () {
-        this.count = 0
+      export const test = base.extend({
+        counter: ({}, use) => use({ count: 0 })
+      });
+      ```
+    And a step file named "features/step-definitions/watched-steps.js" with:
+      ```js
+      import { When, Then } from "vite-plugin-gherkin";
+      import { expect } from "vitest";
+
+      When(/^I call a watched step$/, function(_, { counter }) {
+        counter.count += 1;
+      });
+
+      Then(/^the watched step should have been called (\d+) times?$/, (count, { counter }) => {
+        expect(counter.count).toBe(parseInt(count));
       })
+      ```
+    When I run the tests
+    Then the tests pass
 
-      When(/^I call a watched step$/, function() {
-        this.count += 1
-      })
-
-      Then(/^the watched step should have been called (\d+) times?$/, function(count){
-        assert.equal(this.count, parseInt(count))
-      })
-      """
-    When I run cucumber-js
-    Then it passes
-
-  # TODO
   Scenario: Steps accepting parameters
-    Given a file named "features/a.feature" with:
+    Given a feature file named "features/a.feature" with:
       """
       Feature: Steps receiving parameters
         Scenario: Single-parameter step
@@ -90,28 +104,34 @@ Feature: Core feature elements execution
           And the 2nd received parameter should be "two"
           And the 3rd received parameter should be "three"
       """
-    And a file named "features/step_definitions/cucumber_steps.js" with:
-      """
-      const {setWorldConstructor, Then, When} = require('@cucumber/cucumber')
-      const assert = require('assert')
+    And a test context file named "features/support/test.js" with:
+      ```js
+      import { test as base } from "vitest";
 
-      setWorldConstructor(function () {
-        this.parameters = {}
-      })
+      export const test = base.extend({
+        parameters: ({}, use) => use({})
+      });
+      ```
+    And a step file named "features/step-definitions/parameter-steps.js" with:
+      ```js
+      import { When, Then } from "vite-plugin-gherkin";
+      import { expect } from "vitest";
 
-      When(/^I call a step with "([^"]*)"$/, function(arg) {
-        this.parameters['1'] = arg
-      })
+      When(/^I call a step with "([^"]*)"$/, ([arg], { parameters }) => {
+        parameters['1'] = arg
+      });
 
-      When(/^I call a step with "([^"]*)", "([^"]*)" and "([^"]*)"$/, function(arg1, arg2, arg3) {
-        this.parameters['1'] = arg1
-        this.parameters['2'] = arg2
-        this.parameters['3'] = arg3
-      })
+      When(/^I call a step with "([^"]*)", "([^"]*)" and "([^"]*)"$/,
+        ([arg1, arg2, arg3], { parameters }) => {
+          parameters['1'] = arg1;
+          parameters['2'] = arg2;
+          parameters['3'] = arg3;
+      });
 
-      Then(/^the (\d+)(?:st|nd|rd) received parameter should be "([^"]*)"$/, function(index, arg){
-        assert.equal(this.parameters[index], arg)
-      })
-      """
-    When I run cucumber-js
-    Then it passes
+      Then(/^the (\d+)(?:st|nd|rd) received parameter should be "([^"]*)"$/,
+        ([index, arg], { parameters }) => {
+          expect(parameters[index]).toBe(arg);
+      });
+      ```
+    When I run the tests
+    Then the tests pass

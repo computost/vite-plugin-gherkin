@@ -1,1 +1,3 @@
 lefthook # https://lefthook.dev/
+vite # https://vite.dev/
+vitest # https://vitest.dev/
