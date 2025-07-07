@@ -1,34 +1,34 @@
-import { stripLiteral } from "strip-literal";
 import type { TestContext } from "vitest";
-import { getStep } from "./step-registry.ts";
+
+import { stripLiteral } from "strip-literal";
+
+import { getStep, type StepFunction } from "./step-registry.ts";
 
 export function buildTestFunction(
-  testSteps: <T>(step: (text: string, doc?: string) => T) => Iterable<T>
+  testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>,
 ) {
   const steps = Array.from(testSteps(getStep));
 
   if (!allDefined(steps)) {
     return function reportMissingSteps() {
       let i = 0;
-      for (let _ of testSteps((text) => {
+      testSteps((text) => {
         if (!steps[i]) {
           throw new Error(`Undefined step: ${text}`);
         }
-      })) {
-        i++;
-      }
+      }).forEach(() => i++);
     };
   }
 
   const scenarioFunction = async function scenarioFunction(
-    context: TestContext & unknown
+    context: TestContext & unknown,
   ) {
     let i = 0;
-    for (let task of testSteps((_, doc) => {
+    for (const task of testSteps((_, doc) => {
       const step = steps[i];
       return step.fn(
         [...step.args.map((arg) => arg.getValue(context)), doc],
-        context
+        context,
       );
     })) {
       await task;
@@ -36,8 +36,8 @@ export function buildTestFunction(
     }
   };
   scenarioFunction.toString = () =>
-    `({${[...new Set(steps.flatMap((step) => getUsedProps(step.fn, 1)))].join(
-      ","
+    `({${[...new Set(steps.flatMap((step) => getUsedProps(step.fn)))].join(
+      ",",
     )}}) => {}`;
   return scenarioFunction;
 }
@@ -46,9 +46,9 @@ function allDefined<T>(arr: T[]): arr is NonNullable<T>[] {
   return arr.every((e) => e != null);
 }
 
-// borrowed directy from the vitest repo with minor modifications
+// borrowed directly from the vitest repo with minor modifications
 // https://github.com/vitest-dev/vitest/blob/v3.2.4/packages/runner/src/fixture.ts#L341
-function getUsedProps(fn: Function, fixtureIndex: number) {
+function getUsedProps(fn: StepFunction<object>) {
   let fnString = stripLiteral(fn.toString());
   // match lowered async function and strip it off
   // example code on esbuild-try https://esbuild.github.io/try/#YgAwLjI0LjAALS1zdXBwb3J0ZWQ6YXN5bmMtYXdhaXQ9ZmFsc2UAZQBlbnRyeS50cwBjb25zdCBvID0gewogIGYxOiBhc3luYyAoKSA9PiB7fSwKICBmMjogYXN5bmMgKGEpID0+IHt9LAogIGYzOiBhc3luYyAoYSwgYikgPT4ge30sCiAgZjQ6IGFzeW5jIGZ1bmN0aW9uKGEpIHt9LAogIGY1OiBhc3luYyBmdW5jdGlvbiBmZihhKSB7fSwKICBhc3luYyBmNihhKSB7fSwKCiAgZzE6IGFzeW5jICgpID0+IHt9LAogIGcyOiBhc3luYyAoeyBhIH0pID0+IHt9LAogIGczOiBhc3luYyAoeyBhIH0sIGIpID0+IHt9LAogIGc0OiBhc3luYyBmdW5jdGlvbiAoeyBhIH0pIHt9LAogIGc1OiBhc3luYyBmdW5jdGlvbiBnZyh7IGEgfSkge30sCiAgYXN5bmMgZzYoeyBhIH0pIHt9LAoKICBoMTogYXN5bmMgKCkgPT4ge30sCiAgLy8gY29tbWVudCBiZXR3ZWVuCiAgaDI6IGFzeW5jIChhKSA9PiB7fSwKfQ
@@ -57,7 +57,7 @@ function getUsedProps(fn: Function, fixtureIndex: number) {
   //   __async(this, [_0, _1], function*
   if (
     /__async\((?:this|null), (?:null|arguments|\[[_0-9, ]*\]), function\*/.test(
-      fnString
+      fnString,
     )
   ) {
     fnString = fnString.split(/__async\((?:this|null),/)[1];
@@ -68,15 +68,15 @@ function getUsedProps(fn: Function, fixtureIndex: number) {
   }
 
   const args = splitByComma(match[1]);
-  if (args.length <= fixtureIndex) {
+  if (args.length <= 1) {
     return [];
   }
 
-  let fixtureArg = args[fixtureIndex];
+  const fixtureArg = args[1];
 
   if (!(fixtureArg.startsWith("{") && fixtureArg.endsWith("}"))) {
     throw new Error(
-      `The first argument inside a fixture must use object destructuring pattern, e.g. ({ test } => {}). Instead, received "${fixtureArg}".`
+      `The first argument inside a fixture must use object destructuring pattern, e.g. ({ test } => {}). Instead, received "${fixtureArg}".`,
     );
   }
 
@@ -88,7 +88,7 @@ function getUsedProps(fn: Function, fixtureIndex: number) {
   const last = props.at(-1);
   if (last && last.startsWith("...")) {
     throw new Error(
-      `Rest parameters are not supported in fixtures, received "${last}".`
+      `Rest parameters are not supported in fixtures, received "${last}".`,
     );
   }
 

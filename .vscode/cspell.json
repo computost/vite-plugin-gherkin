@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/refs/tags/v8.18.1/cspell.schema.json",
+  "dictionaries": ["tools"],
+  "dictionaryDefinitions": [
+    {
+      "addWords": true,
+      "name": "tools",
+      "path": "../.cspell/tools-dictionary.txt",
+      "scope": "workspace"
+    }
+  ],
+  "ignorePaths": ["pnpm-lock.yaml", "pnpm-workspace.yaml"],
+  "useGitignore": true
+}

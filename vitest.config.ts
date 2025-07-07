@@ -1,14 +1,14 @@
-import { vitePluginGherkin } from "vite-plugin-gherkin";
-import { defineConfig } from "vitest/config";
 import { glob } from "glob";
 import path from "path";
+import { vitePluginGherkin } from "vite-plugin-gherkin";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
     vitePluginGherkin({
       importTestFrom: path.resolve(
         __dirname,
-        "./features/step-definitions/test-context.ts"
+        "./features/step-definitions/test-context.ts",
       ),
     }),
   ],

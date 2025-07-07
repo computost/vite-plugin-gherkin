@@ -1,10 +1,16 @@
+// There are several cases in this file where `any` is needed for our current
+// implementation of the API. There might be some ways to improve type safety,
+// but for now, we leave this comment and disable as a TODO.
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type { TestContext } from "vitest";
+
 import {
   CucumberExpression,
   type Expression,
   ParameterTypeRegistry,
   RegularExpression,
 } from "@cucumber/cucumber-expressions";
-import type { TestContext } from "vitest";
 
 type BaseContext = Record<string, any>;
 
@@ -13,22 +19,22 @@ export interface RegisterStep<ExtraContext extends BaseContext> {
     expression: string,
     step: (
       args: TArgs,
-      context: TestContext & ExtraContext
-    ) => void | Promise<void>
+      context: ExtraContext & TestContext,
+    ) => Promise<void> | void,
   ): void;
   (
     regExp: RegExp,
     step: (
       args: readonly string[],
-      context: TestContext & ExtraContext
-    ) => void | Promise<void>
+      context: ExtraContext & TestContext,
+    ) => Promise<void> | void,
   ): void;
 }
 
 export type StepFunction<ExtraContext extends BaseContext> = (
   args: any[],
-  context: TestContext & ExtraContext
-) => void | Promise<void>;
+  context: ExtraContext & TestContext,
+) => Promise<void> | void;
 
 const stepRegistry: {
   expression: Expression;
@@ -37,8 +43,8 @@ const stepRegistry: {
 const parameterTypeRegistry = new ParameterTypeRegistry();
 
 export const registerStep: RegisterStep<object> = (
-  expression: string | RegExp,
-  step: StepFunction<object>
+  expression: RegExp | string,
+  step: StepFunction<object>,
 ) => {
   if (typeof expression === "string") {
     stepRegistry.push({
@@ -54,10 +60,10 @@ export const registerStep: RegisterStep<object> = (
 };
 
 export function getStep(step: string) {
-  for (let { expression, step: fn } of stepRegistry) {
+  for (const { expression, step: fn } of stepRegistry) {
     const args = expression.match(step);
     if (args) {
-      return { fn, args };
+      return { args, fn };
     }
   }
   return null;

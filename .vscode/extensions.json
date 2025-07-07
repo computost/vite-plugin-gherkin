@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "cucumberopen.cucumber-official",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "vitest.explorer"
+  ]
+}

@@ -1,66 +1,67 @@
-import { Given, Then, When } from "./test-context.ts";
-import { startVitest } from "vitest/node";
-import { expect } from "vitest";
 import { vitePluginGherkin } from "vite-plugin-gherkin";
+import { expect } from "vitest";
+import { startVitest } from "vitest/node";
+
+import { Given, Then, When } from "./test-context.ts";
 
 Given(
   "a feature file named {string}:",
-  ([fileName, file]: [string, string], { virutalTestFiles }) => {
-    virutalTestFiles.push({ fileName, file });
-  }
+  ([fileName, file]: [string, string], { virtualTestFiles }) => {
+    virtualTestFiles.push({ file, fileName });
+  },
 );
 
 When(
   "I run the tests",
-  async ([], { setupFiles, virutalTestFiles, testResults, importTestFrom }) => {
+  async (_, { importTestFrom, setupFiles, testResults, virtualTestFiles }) => {
     testResults.vitest = await startVitest(
       "test",
       [],
       {
         config: false,
-        watch: false,
         silent: true,
+        watch: false,
       },
       {
         plugins: [
           {
-            name: "virtual-test-files",
             enforce: "pre",
             load(id) {
               if (id === "virtual:test-files") {
-                return virutalTestFiles
+                return virtualTestFiles
                   .map(({ fileName }) => `import "${fileName}";`)
                   .join("\n");
               }
-              const virtualTestFile = virutalTestFiles.find(
-                ({ fileName }) => fileName === id
+              const virtualTestFile = virtualTestFiles.find(
+                ({ fileName }) => fileName === id,
               );
               if (virtualTestFile) {
                 return virtualTestFile.file;
               }
             },
+            name: "virtual-test-files",
           },
           vitePluginGherkin(
             importTestFrom.testFile
               ? { importTestFrom: importTestFrom.testFile }
-              : undefined
+              : undefined,
           ),
         ],
         test: {
-          setupFiles,
           include: ["tests/load-virtual-test-files.ts"],
+          setupFiles,
         },
-      }
+      },
     );
-  }
+  },
 );
 
-Then("the tests pass", ([], { testResults }) => {
+Then("the tests pass", (_, { testResults }) => {
   const modules = testResults.vitest!.state.getTestModules();
   expect(modules.every((module) => module.ok())).toBe(true);
 });
 
-Then("the tests fail", ([], { testResults }) => {
+Then("the tests fail", (_, { testResults }) => {
   const modules = testResults.vitest!.state.getTestModules();
   expect(modules.some((module) => module.ok())).toBe(false);
 });

@@ -1,24 +1,24 @@
-import { test as base } from "vitest";
 import {
   Given as baseGiven,
-  When as baseWhen,
   Then as baseThen,
+  When as baseWhen,
   type RegisterStep,
 } from "vite-plugin-gherkin";
+import { test as base } from "vitest";
 import { Vitest } from "vitest/node";
 
 interface VitestConfiguration {
-  setupFiles: string[];
-  virutalTestFiles: { fileName: string; file: string }[];
   importTestFrom: { testFile?: string };
+  setupFiles: string[];
   testResults: { vitest?: Vitest };
+  virtualTestFiles: { file: string; fileName: string }[];
 }
 
 export const test = base.extend<VitestConfiguration>({
-  setupFiles: ({}, use) => use([]),
-  virutalTestFiles: ({}, use) => use([]),
   importTestFrom: ({}, use) => use({}),
+  setupFiles: ({}, use) => use([]),
   testResults: ({}, use) => use({}),
+  virtualTestFiles: ({}, use) => use([]),
 });
 
 export const Given = baseGiven as RegisterStep<VitestConfiguration>;
