@@ -3,7 +3,7 @@ import path, { dirname } from "path";
 
 import { Given } from "../support/test-context.ts";
 
-Given<[string]>(
+Given(
   "a test context file named {string} with:",
   async ([file, body], { importTestFrom, tempDir }) => {
     const filePath = path.join(tempDir, file);
@@ -13,7 +13,7 @@ Given<[string]>(
   },
 );
 
-Given<[string]>(
+Given(
   "a step file named {string} with:",
   async ([file, body], { setupFiles, tempDir }) => {
     const filePath = path.join(tempDir, file);
@@ -23,7 +23,7 @@ Given<[string]>(
   },
 );
 
-Given<[string]>(
+Given(
   "a feature file named {string} with:",
   async ([file, body], { tempDir, testFiles }) => {
     const filePath = path.join(tempDir, file);
