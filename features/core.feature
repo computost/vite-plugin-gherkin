@@ -5,13 +5,14 @@ Feature: Core feature elements execution
 
   Scenario: simple
     Given a feature file named "features/a.feature" with:
-      """
+      ```gherkin
       Feature: some feature
+
         Scenario:
           Given a step passes
           When a step passes
           Then a step passes
-      """
+      ```
     And a step file named "features/step-definitions/passing-step.js" with:
       ```js
       import { Given } from "vite-plugin-gherkin";
@@ -23,8 +24,9 @@ Feature: Core feature elements execution
 
   Scenario: Given, When, Then, And and But steps
     Given a feature file named "features/a.feature" with:
-      """
+      ```gherkin
       Feature: Given, When, Then, And and But step execution
+
         Scenario: All kinds of steps
           Given a "Given" step passes
           When a "When" step passes
@@ -40,7 +42,7 @@ Feature: Core feature elements execution
           Then a "Then" step passes
           And a "Then" step passes
           But a "Then" step passes
-      """
+      ```
     And a step file named "features/step-definitions/passing-steps.js" with:
       ```js
       import { Given, Then, When } from "vite-plugin-gherkin";
@@ -54,8 +56,9 @@ Feature: Core feature elements execution
 
   Scenario: Step definition body is executed
     Given a feature file named "features/a.feature" with:
-      """
+      ```gherkin
       Feature: Step definition body execution
+
         Scenario: Step definition body is executed once
           When I call a watched step
           Then the watched step should have been called 1 time
@@ -65,7 +68,7 @@ Feature: Core feature elements execution
           And I call a watched step
           And I call a watched step
           Then the watched step should have been called 3 times
-      """
+      ```
     And a test context file named "features/support/test.js" with:
       ```js
       import { test as base } from "vitest";
@@ -92,8 +95,9 @@ Feature: Core feature elements execution
 
   Scenario: Steps accepting parameters
     Given a feature file named "features/a.feature" with:
-      """
+      ```gherkin
       Feature: Steps receiving parameters
+
         Scenario: Single-parameter step
           When I call a step with "a parameter"
           Then the 1st received parameter should be "a parameter"
@@ -103,7 +107,7 @@ Feature: Core feature elements execution
           Then the 1st received parameter should be "one"
           And the 2nd received parameter should be "two"
           And the 3rd received parameter should be "three"
-      """
+      ```
     And a test context file named "features/support/test.js" with:
       ```js
       import { test as base } from "vitest";

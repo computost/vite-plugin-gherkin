@@ -2,13 +2,14 @@ Feature: Data Tables
 
   Scenario: raw
     Given a feature file named "features/table.feature" with:
-      """
+      ```gherkin
       Feature: a feature
+
         Scenario: a scenario
           Given a table step
             | Cucumber     | Cucumis sativus |
             | Burr Gherkin | Cucumis anguria |
-      """
+      ```
     And a step file named "features/step-definitions/table-steps.js" with:
       ```js
       import { Given } from "vite-plugin-gherkin";
@@ -26,15 +27,16 @@ Feature: Data Tables
 
   Scenario: rows
     Given a feature file named "features/table.feature" with:
-      """
+      ```gherkin
       Feature: a feature
+
         Scenario: a scenario
           Given a table step
             | Vegetable | Rating |
             | Apricot   | 5      |
             | Broccoli  | 2      |
             | Cucumber  | 10     |
-      """
+      ```
     And a step file named "features/step-definitions/table-step.js" with:
       ```js
       import { Given } from "vite-plugin-gherkin";
@@ -53,13 +55,14 @@ Feature: Data Tables
 
   Scenario: rowsHash
     Given a feature file named "features/table.feature" with:
-      """
+      ```gherkin
       Feature: a feature
+
         Scenario: a scenario
           Given a table step
             | Cucumber     | Cucumis sativus |
             | Burr Gherkin | Cucumis anguria |
-      """
+      ```
     And a step file named "features/step-definitions/table-steps.js" with:
       ```js
       import { Given } from "vite-plugin-gherkin";
@@ -77,15 +80,16 @@ Feature: Data Tables
 
   Scenario: hashes
     Given a feature file named "features/table.feature" with:
-      """
+      ```gherkin
       Feature: a feature
+
         Scenario: a scenario
           Given a table step
             | Vegetable | Rating |
             | Apricot   | 5      |
             | Broccoli  | 2      |
             | Cucumber  | 10     |
-      """
+      ```
     Given a step file named "features/step-definitions/table-steps.js" with:
       ```js
       import { Given } from "vite-plugin-gherkin";

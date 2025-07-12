@@ -34,21 +34,23 @@ Feature: Scenario
       });
       ```
     And a feature file named "features/add-numbers.feature" with:
-      ```
+      ```gherkin
       Feature: Add numbers
-          Scenario: a + b = c
-              Given number "a" is 5
-              And number "b" is 2
-              When I add "a" and "b" into "c"
-              Then "c" equals 7
+
+        Scenario: a + b = c
+          Given number "a" is 5
+          And number "b" is 2
+          When I add "a" and "b" into "c"
+          Then "c" equals 7
       ```
     When I run the tests
     Then the tests pass
 
   Scenario: Missing step
     Given a feature file named "features/missing-step.feature" with:
-      ```
+      ```gherkin
       Feature: Do nothing
+
         Scenario: nothing
           When I try to do something
           Then nothing happens
