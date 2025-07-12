@@ -5,7 +5,12 @@ import {
   GherkinClassicTokenMatcher,
   Parser,
 } from "@cucumber/gherkin";
-import { type DataTable, IdGenerator, type Location } from "@cucumber/messages";
+import {
+  type DataTable,
+  IdGenerator,
+  type Location,
+  Step,
+} from "@cucumber/messages";
 import path from "path";
 import { SourceNode } from "source-map-generator";
 
@@ -29,7 +34,7 @@ export function vitePluginGherkin({
         const gherkinDocument = parser.parse(code);
         if (gherkinDocument.feature) {
           const source = new SourceNode()
-            .add(`import { describe } from "vitest";\n`)
+            .add(`import { describe, beforeEach } from "vitest";\n`)
             .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
               `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
@@ -44,6 +49,18 @@ export function vitePluginGherkin({
                   JSON.stringify(gherkinDocument.feature.name),
                   ", () => {\n",
                   ...gherkinDocument.feature.children.map((child) => {
+                    if (child.background) {
+                      return new SourceNode(
+                        child.background.location.line,
+                        column(child.background.location),
+                        id,
+                        [
+                          "beforeEach(",
+                          buildTestFunction(child.background.steps),
+                          ");",
+                        ],
+                      );
+                    }
                     if (child.scenario) {
                       return new SourceNode(
                         child.scenario.location.line,
@@ -52,38 +69,9 @@ export function vitePluginGherkin({
                         [
                           "test(",
                           JSON.stringify(child.scenario.name),
-                          ", buildTestFunction(function*(step) {\n",
-                          ...child.scenario.steps.map(
-                            (step) =>
-                              new SourceNode(
-                                step.location.line,
-                                column(step.location),
-                                id,
-                                [
-                                  "yield step(",
-                                  JSON.stringify(step.text),
-                                  ",",
-                                  step.dataTable
-                                    ? new SourceNode(
-                                        step.dataTable.location.line,
-                                        column(step.dataTable.location),
-                                        id,
-                                        [
-                                          "new DataTable(",
-                                          JSON.stringify(
-                                            rawTable(step.dataTable),
-                                          ),
-                                          ")",
-                                        ],
-                                      )
-                                    : step.docString
-                                      ? JSON.stringify(step.docString.content)
-                                      : "undefined",
-                                  ");\n",
-                                ],
-                              ),
-                          ),
-                          "}));\n",
+                          ", ",
+                          buildTestFunction(child.scenario.steps),
+                          ");\n",
                         ],
                       );
                     }
@@ -101,6 +89,37 @@ export function vitePluginGherkin({
             moduleSideEffects: true,
           };
         }
+      }
+
+      function buildTestFunction(steps: readonly Step[]) {
+        return new SourceNode()
+          .add("buildTestFunction(function*(step) {\n")
+          .add(
+            steps.map(
+              (step) =>
+                new SourceNode(step.location.line, column(step.location), id, [
+                  "yield step(",
+                  JSON.stringify(step.text),
+                  ",",
+                  step.dataTable
+                    ? new SourceNode(
+                        step.dataTable.location.line,
+                        column(step.dataTable.location),
+                        id,
+                        [
+                          "new DataTable(",
+                          JSON.stringify(rawTable(step.dataTable)),
+                          ")",
+                        ],
+                      )
+                    : step.docString
+                      ? JSON.stringify(step.docString.content)
+                      : "undefined",
+                  ");\n",
+                ]),
+            ),
+          )
+          .add("})");
       }
     },
   };
