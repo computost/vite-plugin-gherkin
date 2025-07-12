@@ -6,10 +6,14 @@ import {
   Parser,
 } from "@cucumber/gherkin";
 import {
+  type Background,
   type DataTable,
+  type Feature,
   IdGenerator,
   type Location,
-  Step,
+  type Rule,
+  type Scenario,
+  type Step,
 } from "@cucumber/messages";
 import path from "path";
 import { SourceNode } from "source-map-generator";
@@ -39,48 +43,7 @@ export function vitePluginGherkin({
             .add(
               `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
             )
-            .add(
-              new SourceNode(
-                gherkinDocument.feature.location.line,
-                column(gherkinDocument.feature.location),
-                id,
-                [
-                  "describe(",
-                  JSON.stringify(gherkinDocument.feature.name),
-                  ", () => {\n",
-                  ...gherkinDocument.feature.children.map((child) => {
-                    if (child.background) {
-                      return new SourceNode(
-                        child.background.location.line,
-                        column(child.background.location),
-                        id,
-                        [
-                          "beforeEach(",
-                          buildTestFunction(child.background.steps),
-                          ");",
-                        ],
-                      );
-                    }
-                    if (child.scenario) {
-                      return new SourceNode(
-                        child.scenario.location.line,
-                        column(child.scenario.location),
-                        id,
-                        [
-                          "test(",
-                          JSON.stringify(child.scenario.name),
-                          ", ",
-                          buildTestFunction(child.scenario.steps),
-                          ");\n",
-                        ],
-                      );
-                    }
-                    throw new Error("Not Implemented");
-                  }),
-                  "});",
-                ],
-              ),
-            )
+            .add(buildFeature(gherkinDocument.feature))
             .toStringWithSourceMap();
           source.map.setSourceContent(id, code);
           return {
@@ -89,6 +52,74 @@ export function vitePluginGherkin({
             moduleSideEffects: true,
           };
         }
+      }
+
+      function buildFeature(feature: Feature) {
+        return new SourceNode(
+          feature.location.line,
+          column(feature.location),
+          id,
+          [
+            "describe(",
+            JSON.stringify(feature.name),
+            ", () => {\n",
+            ...feature.children.map((child) => {
+              if (child.rule) {
+                return buildRule(child.rule);
+              }
+              if (child.background) {
+                return buildBackground(child.background);
+              }
+              if (child.scenario) {
+                return buildScenario(child.scenario);
+              }
+              throw new Error("Invalid feature");
+            }),
+            "});",
+          ],
+        );
+      }
+
+      function buildRule(rule: Rule) {
+        return new SourceNode(rule.location.line, column(rule.location), id, [
+          "describe(",
+          JSON.stringify(rule.name),
+          ", () => {\n",
+          ...rule.children.map((ruleChild) => {
+            if (ruleChild.background) {
+              return buildBackground(ruleChild.background);
+            }
+            if (ruleChild.scenario) {
+              return buildScenario(ruleChild.scenario);
+            }
+            throw new Error("Invalid rule");
+          }),
+          "});\n",
+        ]);
+      }
+
+      function buildBackground(background: Background) {
+        return new SourceNode(
+          background.location.line,
+          column(background.location),
+          id,
+          ["beforeEach(", buildTestFunction(background.steps), ");\n"],
+        );
+      }
+
+      function buildScenario(scenario: Scenario) {
+        return new SourceNode(
+          scenario.location.line,
+          column(scenario.location),
+          id,
+          [
+            "test(",
+            JSON.stringify(scenario.name),
+            ", ",
+            buildTestFunction(scenario.steps),
+            ");\n",
+          ],
+        );
       }
 
       function buildTestFunction(steps: readonly Step[]) {
