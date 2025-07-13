@@ -102,7 +102,7 @@ Feature: Rule keyword
       });
 
       Then('one ninja dies', () => {
-        throw 'fail';
+        throw new Error('fail');
       });
 
       Then('there is one ninja less alive', () => {});
@@ -110,4 +110,4 @@ Feature: Rule keyword
       Then('they will live forever', () => {});
       ```
     When I run the tests
-    Then the tests fail
+    Then the tests fail in "features/highlander.feature" on line 11

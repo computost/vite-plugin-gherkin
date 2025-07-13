@@ -1,3 +1,4 @@
+import path from "path/posix";
 import { vitePluginGherkin } from "vite-plugin-gherkin";
 import { expect } from "vitest";
 import { startVitest } from "vitest/node";
@@ -45,3 +46,18 @@ Then("the tests fail", (_, { testResults }) => {
   const modules = testResults.vitest!.state.getTestModules();
   expect(modules.some((module) => module.ok())).toBe(false);
 });
+
+Then(
+  "the tests fail in {string} on line {int}",
+  ([fileName, line], { testResults }) => {
+    const moduleId = path.join(testResults.vitest!.config.root, fileName);
+    const testModules = testResults.vitest!.state.getTestModules([moduleId]);
+    expect(
+      testModules[Symbol.iterator]()
+        .flatMap((testModule) => testModule.children.allTests("failed"))
+        .flatMap((test) => test.result().errors || [])
+        .flatMap((error) => error.stacks || [])
+        .toArray(),
+    ).toContainEqual(expect.objectContaining({ file: moduleId, line }));
+  },
+);

@@ -56,4 +56,4 @@ Feature: Scenario
           Then nothing happens
       ```
     When I run the tests
-    Then the tests fail
+    Then the tests fail in "features/missing-step.feature" on line 4
