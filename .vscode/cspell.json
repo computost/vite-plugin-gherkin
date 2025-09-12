@@ -16,5 +16,6 @@
     }
   ],
   "ignorePaths": ["pnpm-lock.yaml", "pnpm-workspace.yaml"],
-  "useGitignore": true
+  "useGitignore": true,
+  "words": ["Computost", "Hogsett"]
 }

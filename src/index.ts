@@ -6,3 +6,9 @@ export { vitePluginGherkin } from "./vite-plugin-gherkin.ts";
 export const Given = registerStep;
 export const When = registerStep;
 export const Then = registerStep;
+
+declare module "vitest" {
+  export interface TaskMeta {
+    tags?: string[];
+  }
+}

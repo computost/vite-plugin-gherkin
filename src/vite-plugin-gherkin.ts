@@ -33,16 +33,19 @@ export function vitePluginGherkin({
 
   return {
     name: "vite-plugin-gherkin",
-    async transform(code, id) {
+    transform(code, id) {
       if (path.extname(id) === ".feature") {
         const gherkinDocument = parser.parse(code);
         if (gherkinDocument.feature) {
           const source = new SourceNode()
             .add(`import { describe, beforeEach } from "vitest";\n`)
-            .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
-              `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
+              `import { test as base } from ${JSON.stringify(importTestFrom)};\n`,
             )
+            .add(
+              `import { buildTestFunction, DataTable, gherkinContext } from "vite-plugin-gherkin/internal";\n`,
+            )
+            .add("const test = gherkinContext(base);\n")
             .add(buildFeature(gherkinDocument.feature))
             .toStringWithSourceMap();
           source.map.setSourceContent(id, code);
@@ -62,7 +65,7 @@ export function vitePluginGherkin({
           [
             "describe(",
             JSON.stringify(feature.name),
-            ", () => {\n",
+            ", ({ scoped }) => {\n",
             ...feature.children.map((child) => {
               if (child.rule) {
                 return buildRule(child.rule);
@@ -113,6 +116,21 @@ export function vitePluginGherkin({
           column(scenario.location),
           id,
           [
+            "scoped({ __gherkin_tags: [",
+            new SourceNode()
+              .add(
+                scenario.tags.map(
+                  (tag) =>
+                    new SourceNode(
+                      tag.location.line,
+                      column(tag.location),
+                      id,
+                      JSON.stringify(tag.name),
+                    ),
+                ),
+              )
+              .join(","),
+            "]});\n",
             "test(",
             JSON.stringify(scenario.name),
             ", ",
