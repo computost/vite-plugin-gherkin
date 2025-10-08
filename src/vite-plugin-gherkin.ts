@@ -68,13 +68,13 @@ export function vitePluginGherkin({
             ", ({ scoped }) => {\n",
             ...feature.children.map((child) => {
               if (child.rule) {
-                return buildRule(child.rule);
+                return buildRule(feature, child.rule);
               }
               if (child.background) {
                 return buildBackground(child.background);
               }
               if (child.scenario) {
-                return buildScenario(child.scenario);
+                return buildScenario(feature, child.scenario);
               }
               throw new Error("Invalid feature");
             }),
@@ -83,7 +83,7 @@ export function vitePluginGherkin({
         );
       }
 
-      function buildRule(rule: Rule) {
+      function buildRule(feature: Feature, rule: Rule) {
         return new SourceNode(rule.location.line, column(rule.location), id, [
           "describe(",
           JSON.stringify(rule.name),
@@ -93,7 +93,7 @@ export function vitePluginGherkin({
               return buildBackground(ruleChild.background);
             }
             if (ruleChild.scenario) {
-              return buildScenario(ruleChild.scenario);
+              return buildScenario(feature, ruleChild.scenario);
             }
             throw new Error("Invalid rule");
           }),
@@ -110,7 +110,7 @@ export function vitePluginGherkin({
         );
       }
 
-      function buildScenario(scenario: Scenario) {
+      function buildScenario(feature: Feature, scenario: Scenario) {
         return new SourceNode(
           scenario.location.line,
           column(scenario.location),
@@ -119,15 +119,17 @@ export function vitePluginGherkin({
             "scoped({ __gherkin_tags: [",
             new SourceNode()
               .add(
-                scenario.tags.map(
-                  (tag) =>
-                    new SourceNode(
-                      tag.location.line,
-                      column(tag.location),
-                      id,
-                      JSON.stringify(tag.name),
-                    ),
-                ),
+                feature.tags
+                  .concat(scenario.tags)
+                  .map(
+                    (tag) =>
+                      new SourceNode(
+                        tag.location.line,
+                        column(tag.location),
+                        id,
+                        JSON.stringify(tag.name),
+                      ),
+                  ),
               )
               .join(","),
             "]});\n",
