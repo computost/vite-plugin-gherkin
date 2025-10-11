@@ -1,3 +1,7 @@
 plugins:
   - prettier-plugin-gherkin
 trailingComma: all
+overrides:
+  - files: "*.md"
+    options:
+      parser: markdown

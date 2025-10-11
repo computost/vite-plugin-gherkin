@@ -3,10 +3,11 @@ import json from "@eslint/json";
 import markdown from "@eslint/markdown";
 import perfectionist from "eslint-plugin-perfectionist";
 import prettier from "eslint-plugin-prettier/recommended";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config([
+export default defineConfig(
   { ignores: ["dist"] },
   {
     extends: [js.configs.recommended],
@@ -36,6 +37,12 @@ export default tseslint.config([
     files: ["**/*.md"],
     language: "markdown/gfm",
     plugins: { markdown },
+    rules: {
+      "markdown/no-missing-label-refs": [
+        "error",
+        { allowLabels: ["!NOTE", "!IMPORTANT"] },
+      ],
+    },
   },
   {
     extends: [perfectionist.configs["recommended-natural"]],
@@ -43,4 +50,4 @@ export default tseslint.config([
     rules: { "perfectionist/sort-modules": ["off"] },
   },
   prettier,
-]);
+);
