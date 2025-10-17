@@ -17,9 +17,6 @@ importers:
       '@cucumber/messages':
         specifier: ^27.2.0
         version: 27.2.0
-      '@tsconfig/node-ts':
-        specifier: ^23.6.1
-        version: 23.6.1
       source-map-generator:
         specifier: ^2.0.1
         version: 2.0.1
@@ -36,6 +33,9 @@ importers:
       '@eslint/markdown':
         specifier: ^7.4.0
         version: 7.4.0
+      '@tsconfig/node-ts':
+        specifier: ^23.6.1
+        version: 23.6.1
       '@tsconfig/node22':
         specifier: ^22.0.2
         version: 22.0.2
