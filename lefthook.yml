@@ -1,15 +1,15 @@
 pre-commit:
   jobs:
     - name: format-gherkin
-      run: pnpm format-gherkin
+      run: pnpm run format-gherkin
 
     - name: lint
-      run: pnpm lint
+      run: pnpm run lint
 
     - name: spellcheck
-      run: pnpm spellcheck
+      run: pnpm run spellcheck
 
     - name: typecheck
-      run: pnpm typecheck
+      run: pnpm run typecheck
 
   parallel: true
