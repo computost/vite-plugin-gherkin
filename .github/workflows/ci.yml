@@ -4,6 +4,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-24.04
     strategy:
       matrix:
