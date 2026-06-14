@@ -29,7 +29,13 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
+  "keywords": [
+    "vitest",
+    "cucumber",
+    "gherkin",
+    "bdd",
+    "testing"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@11.6.0",
