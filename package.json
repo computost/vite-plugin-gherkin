@@ -4,7 +4,7 @@
   "repository": {
     "url": "https://github.com/computost/vite-plugin-gherkin"
   },
-  "description": "",
+  "description": "A Vitest plugin for running Gherkin specs.",
   "files": [
     "./dist/**/*"
   ],
