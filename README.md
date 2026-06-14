@@ -4,6 +4,11 @@
 
 Check out [Cucumber](https://cucumber.io/) for more info regarding the Gherkin syntax.
 
+> [!WARNING]
+> This package is currently under development and is not intended for production use.
+>
+> That said, it is well-tested, we do not anticipate the API changing too drastically (at most, we _might_ change the methods for creating step definitions, but this seems unlikely), and we would love any feedback if you want to try it out!
+
 ## Getting Started
 
 In your [Vitest configuration file](https://vitest.dev/config/), import and register a `vitePluginGherkin` instance. This will allow you to include Gherkin feature files in your test configuration. Also, don't forget to include your step definitions in your test setup:
