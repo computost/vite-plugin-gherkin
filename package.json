@@ -36,7 +36,7 @@
     "bdd",
     "testing"
   ],
-  "author": "",
+  "author": "Joshua Hogsett",
   "license": "ISC",
   "packageManager": "pnpm@11.6.0",
   "type": "module",
