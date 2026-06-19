@@ -40,7 +40,7 @@ export default defineConfig(
     rules: {
       "markdown/no-missing-label-refs": [
         "error",
-        { allowLabels: ["!NOTE", "!IMPORTANT"] },
+        { allowLabels: ["!NOTE", "!IMPORTANT", "!WARNING"] },
       ],
     },
   },

@@ -1,7 +1,10 @@
 {
   "name": "vite-plugin-gherkin",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.2",
+  "repository": {
+    "url": "https://github.com/computost/vite-plugin-gherkin"
+  },
+  "description": "A Vitest plugin for running Gherkin specs.",
   "files": [
     "./dist/**/*"
   ],
@@ -26,10 +29,16 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "vitest",
+    "cucumber",
+    "gherkin",
+    "bdd",
+    "testing"
+  ],
+  "author": "Joshua Hogsett",
   "license": "ISC",
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@11.6.0",
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^9.38.0",

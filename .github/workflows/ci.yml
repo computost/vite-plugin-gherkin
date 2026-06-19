@@ -1,0 +1,49 @@
+name: CI
+on:
+  push:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        node-version: [24]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Format gherkin
+        run: pnpm run format-gherkin
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Spellcheck
+        run: pnpm run spellcheck
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Publish
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        run: pnpm publish
