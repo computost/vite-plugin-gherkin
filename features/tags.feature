@@ -7,7 +7,7 @@ Feature: Tags
       import { expect } from "vitest";
 
       Then("the task is tagged with {string}", ([expected], { task }) => {
-        expect(task.meta.tags).toContain(expected);
+        expect(task.tags).toEqual([expected]);
       });
       ```
     And a feature file named "features/a.feature" with:
@@ -28,7 +28,7 @@ Feature: Tags
       import { expect } from "vitest";
 
       Then("the task is tagged with {string}", ([expected], { task }) => {
-        expect(task.meta.tags).toContain(expected);
+        expect(task.tags).toEqual([expected]);
       });
       ```
     And a feature file named "features/a.feature" with:
