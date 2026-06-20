@@ -15,5 +15,6 @@ export default defineConfig({
   test: {
     include: ["features/**/*.feature"],
     setupFiles: await glob("features/step-definitions/**/*.ts"),
+    strictTags: false,
   },
 });

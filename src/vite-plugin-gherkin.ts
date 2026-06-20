@@ -63,16 +63,18 @@ export function vitePluginGherkin({
           [
             "describe(",
             JSON.stringify(feature.name),
+            ", ",
+            buildTagsArgument(feature.tags),
             ", () => {\n",
             ...feature.children.map((child) => {
               if (child.rule) {
-                return buildRule(feature, child.rule);
+                return buildRule(child.rule);
               }
               if (child.background) {
                 return buildBackground(child.background);
               }
               if (child.scenario) {
-                return buildScenario(feature, child.scenario);
+                return buildScenario(child.scenario);
               }
               throw new Error("Invalid feature");
             }),
@@ -81,7 +83,7 @@ export function vitePluginGherkin({
         );
       }
 
-      function buildRule(feature: Feature, rule: Rule) {
+      function buildRule(rule: Rule) {
         return new SourceNode(rule.location.line, column(rule.location), id, [
           "describe(",
           JSON.stringify(rule.name),
@@ -91,7 +93,7 @@ export function vitePluginGherkin({
               return buildBackground(ruleChild.background);
             }
             if (ruleChild.scenario) {
-              return buildScenario(feature, ruleChild.scenario);
+              return buildScenario(ruleChild.scenario);
             }
             throw new Error("Invalid rule");
           }),
@@ -104,11 +106,11 @@ export function vitePluginGherkin({
           background.location.line,
           column(background.location),
           id,
-          ["beforeEach(", buildTestFunction([], background.steps), ");\n"],
+          ["beforeEach(", buildTestFunction(background.steps), ");\n"],
         );
       }
 
-      function buildScenario(feature: Feature, scenario: Scenario) {
+      function buildScenario(scenario: Scenario) {
         return new SourceNode(
           scenario.location.line,
           column(scenario.location),
@@ -117,20 +119,18 @@ export function vitePluginGherkin({
             "test(",
             JSON.stringify(scenario.name),
             ", ",
-            buildTestFunction(
-              feature.tags.concat(scenario.tags),
-              scenario.steps,
-            ),
+            buildTagsArgument(scenario.tags),
+            ", ",
+            buildTestFunction(scenario.steps),
             ");\n",
           ],
         );
       }
 
-      function buildTestFunction(tags: readonly Tag[], steps: readonly Step[]) {
+      function buildTagsArgument(tags: readonly Tag[]) {
         return new SourceNode()
-          .add("buildTestFunction(")
-          .add([
-            "[",
+          .add("{ tags: [")
+          .add(
             new SourceNode()
               .add(
                 tags.map(
@@ -144,9 +144,13 @@ export function vitePluginGherkin({
                 ),
               )
               .join(","),
-            "],",
-          ])
-          .add("function*(step) {\n")
+          )
+          .add("] }");
+      }
+
+      function buildTestFunction(steps: readonly Step[]) {
+        return new SourceNode()
+          .add("buildTestFunction(function*(step) {\n")
           .add(
             steps.map(
               (step) =>

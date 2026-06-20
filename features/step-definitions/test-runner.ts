@@ -31,6 +31,7 @@ When(
         test: {
           include: testFiles,
           setupFiles,
+          strictTags: false,
         },
       },
     );
