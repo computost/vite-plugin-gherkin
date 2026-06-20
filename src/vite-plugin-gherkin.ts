@@ -40,13 +40,10 @@ export function vitePluginGherkin({
         if (gherkinDocument.feature) {
           const source = new SourceNode()
             .add(`import { describe, beforeEach } from "vitest";\n`)
+            .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
-              `import { test as base } from ${JSON.stringify(importTestFrom)};\n`,
+              `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
             )
-            .add(
-              `import { buildTestFunction, DataTable, gherkinContext } from "vite-plugin-gherkin/internal";\n`,
-            )
-            .add("const test = gherkinContext(base);\n")
             .add(buildFeature(gherkinDocument.feature))
             .toStringWithSourceMap();
           source.map.setSourceContent(id, code);
