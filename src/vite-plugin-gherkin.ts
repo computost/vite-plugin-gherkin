@@ -63,6 +63,8 @@ export function vitePluginGherkin({
           [
             "describe(",
             JSON.stringify(feature.name),
+            ", ",
+            buildTagsArgument(feature.tags),
             ", () => {\n",
             ...feature.children.map((child) => {
               if (child.rule) {
