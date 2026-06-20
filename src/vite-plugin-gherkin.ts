@@ -14,6 +14,7 @@ import {
   type Rule,
   type Scenario,
   type Step,
+  type Tag,
 } from "@cucumber/messages";
 import path from "path";
 import { SourceNode } from "source-map-generator";
@@ -116,10 +117,33 @@ export function vitePluginGherkin({
             "test(",
             JSON.stringify(scenario.name),
             ", ",
+            buildTagsArgument(scenario.tags),
+            ", ",
             buildTestFunction(scenario.steps),
             ");\n",
           ],
         );
+      }
+
+      function buildTagsArgument(tags: readonly Tag[]) {
+        return new SourceNode()
+          .add("{ tags: [")
+          .add(
+            new SourceNode()
+              .add(
+                tags.map(
+                  (tag) =>
+                    new SourceNode(
+                      tag.location.line,
+                      column(tag.location),
+                      id,
+                      JSON.stringify(tag.name),
+                    ),
+                ),
+              )
+              .join(","),
+          )
+          .add("] }");
       }
 
       function buildTestFunction(steps: readonly Step[]) {
