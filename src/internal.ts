@@ -1,28 +1,12 @@
-import type { TestAPI, TestContext } from "vitest";
+import type { TestContext } from "vitest";
 
 import { stripLiteral } from "strip-literal";
 
 import { getStep, type StepFunction } from "./step-registry.ts";
 export { DataTable } from "./data-table.ts";
 
-interface GherkinContext extends Pick<TestContext, "task"> {
-  __gherkin_tags: string[];
-}
-
-export function gherkinContext(test: TestAPI) {
-  return test.extend<GherkinContext>({
-    __gherkin_tags: ({}, use) => use([]),
-    task: [
-      ({ __gherkin_tags, task }, use) => {
-        task.meta.tags = __gherkin_tags;
-        return use(task);
-      },
-      { auto: true },
-    ],
-  });
-}
-
 export function buildTestFunction(
+  tags: string[],
   testSteps: <T>(step: (text: string, doc?: string) => T) => Generator<T>,
 ) {
   const steps = Array.from(testSteps(getStep));
@@ -41,6 +25,8 @@ export function buildTestFunction(
   const scenarioFunction = async function scenarioFunction(
     context: TestContext & unknown,
   ) {
+    context.task.meta.tags = tags;
+
     let i = 0;
     for (const task of testSteps((_, doc) => {
       const step = steps[i];

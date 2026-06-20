@@ -14,6 +14,7 @@ import {
   type Rule,
   type Scenario,
   type Step,
+  type Tag,
 } from "@cucumber/messages";
 import path from "path";
 import { SourceNode } from "source-map-generator";
@@ -39,13 +40,10 @@ export function vitePluginGherkin({
         if (gherkinDocument.feature) {
           const source = new SourceNode()
             .add(`import { describe, beforeEach } from "vitest";\n`)
+            .add(`import { test } from ${JSON.stringify(importTestFrom)};\n`)
             .add(
-              `import { test as base } from ${JSON.stringify(importTestFrom)};\n`,
+              `import { buildTestFunction, DataTable } from "vite-plugin-gherkin/internal";\n`,
             )
-            .add(
-              `import { buildTestFunction, DataTable, gherkinContext } from "vite-plugin-gherkin/internal";\n`,
-            )
-            .add("const test = gherkinContext(base);\n")
             .add(buildFeature(gherkinDocument.feature))
             .toStringWithSourceMap();
           source.map.setSourceContent(id, code);
@@ -65,7 +63,7 @@ export function vitePluginGherkin({
           [
             "describe(",
             JSON.stringify(feature.name),
-            ", ({ scoped }) => {\n",
+            ", () => {\n",
             ...feature.children.map((child) => {
               if (child.rule) {
                 return buildRule(feature, child.rule);
@@ -106,7 +104,7 @@ export function vitePluginGherkin({
           background.location.line,
           column(background.location),
           id,
-          ["beforeEach(", buildTestFunction(background.steps), ");\n"],
+          ["beforeEach(", buildTestFunction([], background.steps), ");\n"],
         );
       }
 
@@ -116,35 +114,39 @@ export function vitePluginGherkin({
           column(scenario.location),
           id,
           [
-            "scoped({ __gherkin_tags: [",
-            new SourceNode()
-              .add(
-                feature.tags
-                  .concat(scenario.tags)
-                  .map(
-                    (tag) =>
-                      new SourceNode(
-                        tag.location.line,
-                        column(tag.location),
-                        id,
-                        JSON.stringify(tag.name),
-                      ),
-                  ),
-              )
-              .join(","),
-            "]});\n",
             "test(",
             JSON.stringify(scenario.name),
             ", ",
-            buildTestFunction(scenario.steps),
+            buildTestFunction(
+              feature.tags.concat(scenario.tags),
+              scenario.steps,
+            ),
             ");\n",
           ],
         );
       }
 
-      function buildTestFunction(steps: readonly Step[]) {
+      function buildTestFunction(tags: readonly Tag[], steps: readonly Step[]) {
         return new SourceNode()
-          .add("buildTestFunction(function*(step) {\n")
+          .add("buildTestFunction(")
+          .add([
+            "[",
+            new SourceNode()
+              .add(
+                tags.map(
+                  (tag) =>
+                    new SourceNode(
+                      tag.location.line,
+                      column(tag.location),
+                      id,
+                      JSON.stringify(tag.name),
+                    ),
+                ),
+              )
+              .join(","),
+            "],",
+          ])
+          .add("function*(step) {\n")
           .add(
             steps.map(
               (step) =>

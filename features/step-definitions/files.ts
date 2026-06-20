@@ -9,7 +9,7 @@ Given(
     const filePath = path.join(tempDir, file);
     await mkdir(dirname(filePath), { recursive: true });
     await writeFile(path.join(tempDir, file), body as string);
-    importTestFrom.testFile = file;
+    importTestFrom.testFile = `./${file}`;
   },
 );
 
