@@ -1,3 +1,5 @@
 lefthook # https://lefthook.dev/
 vite # https://vite.dev/
 vitest # https://vitest.dev/
+
+jridgewell # https://github.com/jridgewell/sourcemaps/tree/main/packages/remapping

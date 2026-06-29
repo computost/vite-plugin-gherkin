@@ -1,0 +1,1 @@
+{"version":3,"file":"feature.test.ts","mappings":";;;AAAA;AAEE;AAAA;AAAA;AAAA;AACE;;;AAHJ","names":[],"ignoreList":[],"sources":["feature.feature"],"sourcesContent":["Feature: Minimal\n\n  Scenario: minimalistic\n    Given the minimalism\n"]}
